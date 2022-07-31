@@ -9,16 +9,28 @@
 #include <unistd.h>
 #include <stdio.h>
 
+/*
+void printsin(struct sockaddr_in *s, char *str1, char *str2) {
+  printf("%s\n", str1);
+  printf("%s: ", str2);
+  -- port: sin->sin_port (host integer type) 
+  -- IP: sin->sin_addr (IP in dotted-decimal notation) 
+  printf("\n");
+}
+*/
 
-// the purpose of this function is to print the port and the ip of the sender
-
+// the purpose of this function is to print the port and the ip of the sender (+ the message)
 void printsin(struct sockaddr_in *sin, char *pname, char *msg) 
 {
+  unsigned short port = sin->sin_port;
+  unsigned long ip = inet_addr(sin);
   printf("%s\n", pname);
   printf("%s: ", msg);
-  printf("ip= %d", inet_ntoa(sin->sin_addr)); // IP in dotted-decimal notation
-  printf("port= %d, \n", sin->sin_port); // host in integer type 
+  printf("ip= %d", ip); // IP in dotted-decimal notation
+  printf("port= %d, ", port); // host integer type 
+  printf("\n");
 }
+
 
 int main(int argc, char *argv[])
 {

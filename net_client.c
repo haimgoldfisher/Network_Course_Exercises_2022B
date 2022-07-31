@@ -9,7 +9,7 @@
 #include <sys/un.h>
 #include <netinet/in.h>
 #define SIM_LENGTH 10 
-#define IP_ADDRESS "192.168.40.128" 
+#define IP_ADDRESS "31.168.35.137" // www.zap.co.il
 #define PORT 1337 
 
 int main(void)
@@ -41,7 +41,7 @@ int main(void)
       close(sock);
       exit(1);
     }
-
+  char* getter = "GET";
 
   for (count = 1; count <= SIM_LENGTH; count++)
     { read(sock, &value, 4);
