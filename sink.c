@@ -9,28 +9,16 @@
 #include <unistd.h>
 #include <stdio.h>
 
-/*
-void printsin(struct sockaddr_in *s, char *str1, char *str2) {
-  printf("%s\n", str1);
-  printf("%s: ", str2);
-  -- port: sin->sin_port (host integer type) 
-  -- IP: sin->sin_addr (IP in dotted-decimal notation) 
-  printf("\n");
-}
-*/
 
-// the purpose of this function is to print the port and the ip of the sender (+ the message)
+/* the purpose of this function is to print the PORT and the IP ID of the sender */
+
 void printsin(struct sockaddr_in *sin, char *pname, char *msg) 
 {
-  unsigned short port = sin->sin_port;
-  unsigned long ip = inet_addr(sin);
   printf("%s\n", pname);
-  printf("%s: ", msg);
-  printf("ip= %d", ip); // IP in dotted-decimal notation
-  printf("port= %d, ", port); // host integer type 
-  printf("\n");
+  printf("%s ", msg);
+  printf("ip= %s, ", inet_ntoa(sin->sin_addr)); // IP in dotted-decimal notation
+  printf("port= %d \n", sin->sin_port); // host in integer type 
 }
-
 
 int main(int argc, char *argv[])
 {
@@ -38,9 +26,9 @@ int main(int argc, char *argv[])
   struct sockaddr_in  s_in, from;
   struct { char head; u_long  body; char tail;} msg;
 
-  socket_fd = socket (AF_INET, SOCK_DGRAM, 0);
+  socket_fd = socket (AF_INET, SOCK_DGRAM, 0); // open a new UDP socket (without stating the protocol and returning its ptr)
   // at the start, everything is zero until someone sends a message
-  bzero((char *) &s_in, sizeof(s_in));  /* They say you must do this    */
+  bzero((char *) &s_in, sizeof(s_in));  /* They say you must do this    */ // FOR AVOIDING WRONG VALUES 
 
   s_in.sin_family = (short)AF_INET;
   s_in.sin_addr.s_addr = htonl(INADDR_ANY);    /* WILDCARD */
@@ -50,14 +38,16 @@ int main(int argc, char *argv[])
   fflush(stdout);
 
   bind(socket_fd, (struct sockaddr *)&s_in, sizeof(s_in));
-
-  for(;;) {
+  int messages = 0;
+  for(;;) { // while TRUE:
     fsize = sizeof(from);
     cc = recvfrom(socket_fd,&msg,sizeof(msg),0,(struct sockaddr *)&from,&fsize); // BLOCKING CALL until someone sends a message - WAITING CUBE
     printsin( &from, "recv_udp: ", "Packet from:"); // so we can know the port & IP of the client who sent the message (HIS HEADER)
-    printf("Got data ::%c%ld%c\n",msg.head,(long) ntohl(msg.body),msg.tail); 
+    printf("Got data ::%c%ld%c\n",msg.head,(long) ntohl(msg.body),msg.tail);
+    messages++;
     fflush(stdout);
   }
-  
+  int missed_messages = messages - msg.body; // the highest num of message MINUS num of sented messages = unsent messages  
+  // printf("%d of %d messages were sent, %d messages were not sent /n", msg.body-missed_messages, msg.body, missed_messages)
   return 0;
 }
