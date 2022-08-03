@@ -22,12 +22,12 @@ void printsin(struct sockaddr_in *sin, char *pname, char *msg)
 
 int main(int argc, char *argv[])
 {
-  int socket_fd, cc, fsize;
-  struct sockaddr_in  s_in, from;
+  int socket_fd, cc, fsize; // for the socket & reciver
+  struct sockaddr_in  s_in, from; // for the listener and the 'from' sockets address
   struct { char head; u_long  body; char tail;} msg; // the massage
 
   socket_fd = socket (AF_INET, SOCK_DGRAM, 0); // open a new UDP socket (without stating the protocol and returning its ptr)
-  // at the start, everything is zero until someone sends a message
+  // at the start, everything is reset to zero until someone sends a message
   bzero((char *) &s_in, sizeof(s_in));  // set all values in the buffer to zero FOR AVOIDING WRONG VALUES 
 
   s_in.sin_family = (short)AF_INET; // contains the address family, which is always AF_INET when TCP or UDP is used
@@ -35,17 +35,17 @@ int main(int argc, char *argv[])
   s_in.sin_port = htons((u_short)0x3333); // converting to TCP/IP network bytes
 
   printsin( &s_in, "RECV_UDP", "Local socket is:"); // first print, with zeroes (to avoid strange values)
-  fflush(stdout);
+  fflush(stdout); // flushes out the contents of an output stream
 
   bind(socket_fd, (struct sockaddr *)&s_in, sizeof(s_in)); // it checks if port is available
 
   for(;;) { // while TRUE:
     // A message reciever:
-    fsize = sizeof(from);
+    fsize = sizeof(from); // the size of 'from' (struct sockaddr_in)
     cc = recvfrom(socket_fd,&msg,sizeof(msg),0,(struct sockaddr *)&from,&fsize); // BLOCKING CALL until someone sends a message - WAITING CUBE
     printsin( &from, "recv_udp: ", "Packet from:"); // so we can know the port & IP of the client who sent the message (HIS HEADER)
-    printf("Got data ::%c%ld%c\n",msg.head,(long) ntohl(msg.body),msg.tail); // printer for the data which the msg holds
-    fflush(stdout);
+    printf("Got data ::%c%ld%c\n",msg.head,(long) ntohl(msg.body),msg.tail); // printer for the data which the msg/datagram holds
+    fflush(stdout); // flushes out the contents of an output stream
   }
   
   return 0;
