@@ -38,8 +38,8 @@ int main(int argc, char* argv[])
     {
       if (strlen(path) == 1)
       {
-        sscanf(host, "%*[^/]%[^:]:", path);
-        sscanf(host, "%[^/]", host);
+        sscanf(host, "%*[^/]%[^:]:", path); // take the path from host+path
+        sscanf(host, "%[^/]", host); // take the host from host+path
       }
     }
     hostname = host; // update the hostname after parsing
@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
   else { // for host name form or wrong url case
     hostname = url; // update the hostname without any parsing - the url is the hostname or error case
   }
-  
+
   int sock; 
   struct sockaddr_in cli_name; // for the client - the website host name
   sock = socket(AF_INET, SOCK_STREAM, 0); // TCP socket opening
