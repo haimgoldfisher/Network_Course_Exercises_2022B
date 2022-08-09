@@ -29,22 +29,26 @@ int main(int argc, char* argv[])
   char host[100]; // it holds the host name
   char path[100]; // it holds the path of the website after the host name
   int port = PORT; // default port number for web client is 80, but we can also scan a specific port name later
-  if (strncmp(url, pre, strlen(pre)) == 0) { // for "http://..." form
+  if (strncmp(url, pre, strlen(pre)) == 0 || strncmp(url, pre2, strlen(pre2)) == 0) { // for "http://..." form
   /* this method ignore "http://" , divide by ':' (port case) and divide by '/' (path case)
      we accept to get 1 to 3 outputs: the hostname (always), the port (if there is a unique one, else - 80 as default) and the path (if there is one) */
-    sscanf(url, "http://%99[^:]:%99d/%99[^\n]", host, &port, path); // for http://<hostname>/<path> and http://<hostname>:<port>/<path> forms
-    hostname = host; // update the hostname after parsing
-    printf("hostname= %s, port= %d, path= %s\n", hostname, port, path);
-  }
-  else if (strncmp(url, pre2, strlen(pre2)) == 0) { // for "https://..." form
-    sscanf(url, "https://%99[^:]:%99d/%99[^\n]", host, &port, path); // for https://<hostname>/<path> and https://<hostname>:<port>/<path> forms
+    // sscanf(url, "http://%99[^:]:%99d/%99[^\n]", host, &port, path);
+    sscanf(url, "%*[^:]%*[:/]%[^:]:%d%s", host, &port, path); // for http://<hostname>/<path> and http://<hostname>:<port>/<path> forms
+    if (port = 80)
+    {
+      if (strlen(path) == 1)
+      {
+        sscanf(host, "%*[^/]%[^:]:", path);
+        sscanf(host, "%[^/]", host);
+      }
+    }
     hostname = host; // update the hostname after parsing
     printf("hostname= %s, port= %d, path= %s\n", hostname, port, path);
   }
   else { // for host name form or wrong url case
     hostname = url; // update the hostname without any parsing - the url is the hostname or error case
   }
-
+  
   int sock; 
   struct sockaddr_in cli_name; // for the client - the website host name
   sock = socket(AF_INET, SOCK_STREAM, 0); // TCP socket opening
