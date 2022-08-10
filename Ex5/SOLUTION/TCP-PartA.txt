@@ -1,0 +1,4 @@
+When first compiling and running the 2 net files we see that a conenction can't be esteblished, that is because we didn't mention an IP address to connect to.
+After running nslookup and changing the macro IP_ADDRESS to the address we got from nslookup, We seee that a connection is esteblished and the server sends some messeges to the client.
+If we try to run the client while the server is not up we get a Connection refused error because the socket we are trying to connect with doesn't exist.
+ 

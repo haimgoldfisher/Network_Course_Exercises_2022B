@@ -1,0 +1,2 @@
+The progrems work as specified
+I added documantation to all the lines where we set up something that is related to the sockets 

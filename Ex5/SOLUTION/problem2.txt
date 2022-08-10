@@ -1,0 +1,6 @@
+The programs work as specified
+In source.c I create a messege with the hostname given from the command line, and set up a socket to send the data into.
+Then I start an endless loop where I print what I am sending to the socket,which is then handled by gateway.c
+In gateway.c, I set up a socket to listen,recive and send, also using the hostname i get from the command line
+Then in an endless loop i generate a random number between 0 and 1 to know if I am sending the data or I got from source.c or no. If the number is bigger then 0.5, I send the data to be handled by sink.c
+In Sink.c, I set up a port to listen and recive data, and set it to recive from every internal interface, then in an endless loop I recv the data sent from gateway.c and print it to the screen, and every 100 messages i alert that we recived 100 messages and what is the success rate according to the last number got(around 50%)  
